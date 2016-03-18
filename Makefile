@@ -4,8 +4,8 @@ CC_FLAGS := -Wall -Werror
 
 # Directories
 SRC_DIR := src
-OBJ_DIR := output/objects
-BIN_DIR := output
+OBJ_DIR := build
+BIN_DIR := bin
 TEST_DIR := test
 
 # File names
