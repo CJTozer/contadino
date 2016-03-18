@@ -1,6 +1,6 @@
 # Declaration of variables
 CC = g++
-CC_FLAGS = -Wall
+CC_FLAGS = -Wall -Werror
 
 # Directories
 SRC_DIR = src
@@ -26,5 +26,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 clean:
 	rm -f $(EXEC) $(OBJECTS)
 
-test:
-	echo $(OBJECTS)
+# Run the program
+run: $(EXEC)
+	$(EXEC)
