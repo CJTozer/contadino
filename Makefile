@@ -1,10 +1,13 @@
 # Declaration of variables
 CC := g++
 CC_FLAGS := -Wall -Werror
+CLANG := clang
+CLANG_FLAGS := --analyze
 
 # Directories
 SRC_DIR := src
 OBJ_DIR := build
+CLANG_DIR := build/clang
 BIN_DIR := bin
 TEST_DIR := test
 
@@ -12,6 +15,7 @@ TEST_DIR := test
 EXEC = $(BIN_DIR)/contadino
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(patsubst %,$(OBJ_DIR)/%,$(patsubst %.cpp,%.o,$(SOURCES)))
+CLANG_OBJECTS = $(patsubst %,$(CLANG_DIR)/%,$(patsubst %.cpp,%.o,$(SOURCES)))
 TEST_EXEC = $(BIN_DIR)/contadino_test
 TEST_SOURCES = $(wildcard $(TEST_DIR)/*.cpp)
 TEST_OBJECTS = $(patsubst %,$(OBJ_DIR)/%,$(patsubst %.cpp,%.o,$(TEST_SOURCES)))
@@ -26,7 +30,7 @@ all: $(EXEC) $(TEST_EXEC)
 
 # Main target
 $(EXEC): $(OBJECTS)
-	@$(call print_rule,LINK,$(EXEC),$(EXEC))
+	@$(call print_rule,LINK,$(EXEC))
 	@mkdir -p $(BIN_DIR)
 	@$(CC) $(OBJECTS) -o $(EXEC) $(addprefix -l,$(TEST_LIBS))
 
@@ -45,8 +49,8 @@ $(OBJ_DIR)/%.o: %.cpp
 # Clean
 .PHONY: clean
 clean:
-	@$(call print_rule,CLEAN,removing all output)
-	@rm -f $(EXEC) $(OBJECTS) $(TEST_OBJECTS)
+	@$(call print_rule,CLEAN,cleaning...)
+	@rm -f $(EXEC) $(OBJECTS) $(TEST_OBJECTS) $(CLANG_OBJECTS)
 
 # Run the program
 .PHONY: run
@@ -59,6 +63,14 @@ run: $(EXEC)
 test: $(TEST_EXEC)
 	@$(call print_rule,TEST,$(TEST_EXEC))
 	@$(TEST_EXEC) --gtest_color=yes
+
+# Static analysis
+.PHONY: clang
+clang: $(CLANG_OBJECTS)
+$(CLANG_DIR)/%.o: %.cpp
+	@$(call print_rule,CLANG,$<)
+	@mkdir -p $(dir $@)
+	@$(CLANG) -c $(CLANG_FLAGS) $< -o $@
 
 # print_rule: action,target
 print_rule = printf "  $(T_GREEN)%-6s$(T_RESET) $(T_CYAN)%-24s$(T_RESET) %s\n" "$1" "$2"
