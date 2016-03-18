@@ -50,7 +50,7 @@ $(OBJ_DIR)/%.o: %.cpp
 .PHONY: clean
 clean:
 	@$(call print_rule,CLEAN,cleaning...)
-	@rm -f $(EXEC) $(OBJECTS) $(TEST_OBJECTS) $(CLANG_OBJECTS)
+	@rm -f $(EXEC) $(TEST_EXEC) $(OBJECTS) $(TEST_OBJECTS) $(CLANG_OBJECTS)
 
 # Run the program
 .PHONY: run
