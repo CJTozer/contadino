@@ -22,7 +22,7 @@ TEST_OBJECTS = $(patsubst %,$(OBJ_DIR)/%,$(patsubst %.cpp,%.o,$(TEST_SOURCES)))
 
 # Libraries to link
 LIBS =
-TEST_LIBS = gtest
+TEST_LIBS = gtest pthread
 
 # All target
 .PHONY: all
@@ -73,20 +73,24 @@ $(CLANG_DIR)/%.o: %.cpp
 	@$(CLANG) -c $(CLANG_FLAGS) $< -o $@
 
 # print_rule: action,target
-print_rule = printf "  $(T_GREEN)%-6s$(T_RESET) $(T_CYAN)%-24s$(T_RESET) %s\n" "$1" "$2"
+print_rule = printf "  $(T_BLUE)$(T_BRIGHT)%-6s$(T_RESET) $(T_LIME_YELLOW)%-24s$(T_RESET) %s\n" "$1" "$2"
 
 # print_warning: message
 print_warning = ( $(TTY_CLEARLINE) ; printf "  $(T_YELLOW)WARN   $(T_CYAN)%-24s$(T_RESET) %s\n" "$1")
 
 # Colours!
-T_RESET := \e[0m
-T_BOLD := \e[1m
-T_BLACK := \e[30m
-T_RED := \e[31m
-T_GREEN := \e[32m
-T_YELLOW := \e[33m
-T_BLUE := \e[34m
-T_MAGENTA := \e[35m
-T_CYAN := \e[36m
-T_WHITE := \e[37m
+T_BLACK := $(shell tput setaf 0)
+T_RED := $(shell tput setaf 1)
+T_GREEN := $(shell tput setaf 2)
+T_YELLOW := $(shell tput setaf 3)
+T_LIME_YELLOW=$(shell tput setaf 190)
+T_POWDER_BLUE=$(shell tput setaf 153)
+T_BLUE=$(shell tput setaf 4)
+T_MAGENTA=$(shell tput setaf 5)
+T_CYAN=$(shell tput setaf 6)
+T_WHITE=$(shell tput setaf 7)
+T_BRIGHT=$(shell tput bold)
+T_RESET=$(shell tput sgr0)
+T_REVERSE=$(shell tput smso)
+T_UNDERLINE=$(shell tput smul)
 TTY_CLEARLINE = printf "\r\e[K"
