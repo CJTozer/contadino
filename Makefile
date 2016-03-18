@@ -1,38 +1,64 @@
 # Declaration of variables
-CC = g++
-CC_FLAGS = -Wall -Werror
+CC := g++
+CC_FLAGS := -Wall -Werror
 
 # Directories
-SRC_DIR = src
-OBJ_DIR = output/objects
-BIN_DIR = output
+SRC_DIR := src
+OBJ_DIR := output/objects
+BIN_DIR := output
+TEST_DIR := test
 
 # File names
 EXEC = $(BIN_DIR)/contadino
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
-OBJECTS = $(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(patsubst %.cpp,%.o,$(SOURCES)))
+OBJECTS = $(patsubst %,$(OBJ_DIR)/%,$(patsubst %.cpp,%.o,$(SOURCES)))
+TEST_EXEC = $(BIN_DIR)/contadino_test
+TEST_SOURCES = $(wildcard $(TEST_DIR)/*.cpp)
+TEST_OBJECTS = $(patsubst %,$(OBJ_DIR)/%,$(patsubst %.cpp,%.o,$(TEST_SOURCES)))
+
+# Libraries to link
+LIBS =
+TEST_LIBS = gtest
+
+# All target
+.PHONY: all
+all: $(EXEC) $(TEST_EXEC)
 
 # Main target
 $(EXEC): $(OBJECTS)
 	@$(call print_rule,LINK,$(EXEC),$(EXEC))
 	@mkdir -p $(BIN_DIR)
-	@$(CC) $(OBJECTS) -o $(EXEC)
+	@$(CC) $(OBJECTS) -o $(EXEC) $(addprefix -l,$(TEST_LIBS))
 
-# To obtain object files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+# Test target
+$(TEST_EXEC): $(TEST_OBJECTS) $(EXEC)
+	@$(call print_rule,LINK,$(TEST_EXEC),$(TEST_EXEC))
+	@mkdir -p $(BIN_DIR)
+	@$(CC) $(TEST_OBJECTS) -o $(TEST_EXEC) $(addprefix -l,$(TEST_LIBS))
+
+# General compilation rule
+$(OBJ_DIR)/%.o: %.cpp
 	@$(call print_rule,G++,$<)
-	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(dir $@)
 	@$(CC) -c $(CC_FLAGS) $< -o $@
 
-# To remove generated files
+# Clean
+.PHONY: clean
 clean:
-	@$(call print_rule,CLEAN,$(EXEC) $(OBJECTS))
-	@rm -f $(EXEC) $(OBJECTS)
+	@$(call print_rule,CLEAN,removing all output)
+	@rm -f $(EXEC) $(OBJECTS) $(TEST_OBJECTS)
 
 # Run the program
+.PHONY: run
 run: $(EXEC)
 	@$(call print_rule,RUN,$(EXEC))
 	@$(EXEC)
+
+# Run tests
+.PHONY: test
+test: $(TEST_EXEC)
+	@$(call print_rule,TEST,$(TEST_EXEC))
+	@$(TEST_EXEC) --gtest_color=yes
 
 # print_rule: action,target
 print_rule = printf "  $(T_GREEN)%-6s$(T_RESET) $(T_CYAN)%-24s$(T_RESET) %s\n" "$1" "$2"
