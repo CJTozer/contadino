@@ -44,13 +44,15 @@ $(TEST_EXEC): $(TEST_OBJECTS) $(EXEC)
 $(OBJ_DIR)/%.o: %.cpp
 	@$(call print_rule,G++,$<)
 	@mkdir -p $(dir $@)
+	@$(CC) -M -MT $@ $(CC_FLAGS) $< -o $(@:.o=.d)
 	@$(CC) -c $(CC_FLAGS) $< -o $@
 
 # Clean
 .PHONY: clean
 clean:
 	@$(call print_rule,CLEAN,cleaning...)
-	@rm -f $(EXEC) $(TEST_EXEC) $(OBJECTS) $(TEST_OBJECTS) $(CLANG_OBJECTS)
+	@rm -f $(EXEC) $(TEST_EXEC)
+	@rm -rf $(OBJ_DIR)
 
 # Run the program
 .PHONY: run
@@ -71,6 +73,10 @@ $(CLANG_DIR)/%.o: %.cpp
 	@$(call print_rule,CLANG,$<)
 	@mkdir -p $(dir $@)
 	@$(CLANG) -c $(CLANG_FLAGS) $< -o $@
+
+# Include all the dependencies
+-include $(OBJECTS:.o=.d)
+-include $(TEST_OBJECTS:.o=.d)
 
 # print_rule: action,target
 print_rule = printf "  $(T_BLUE)$(T_BRIGHT)%-6s$(T_RESET) $(T_LIME_YELLOW)%-24s$(T_RESET) %s\n" "$1" "$2"
