@@ -5,7 +5,7 @@ int Player::victory_points() {
 
     // Fields: 0-1 | 2 | 3 | 4 | 5+
     // Points:  -1 | 1 | 2 | 3 | 4
-    int fields = _player_board.num_fields();
+    int fields = player_board.num_fields();
     if (fields < 1) {
         vps -= 1;
     } else if (fields <= 5) {
@@ -16,7 +16,7 @@ int Player::victory_points() {
 
     // Pastures:  0 | 1 | 2 | 3 | 4+
     // Points:   -1 | 1 | 2 | 3 | 4
-    int pastures = _player_board.num_pastures();
+    int pastures = player_board.num_pastures();
     if (pastures == 0) {
         vps -= 1;
     } else if (pastures <= 4) {
@@ -27,14 +27,14 @@ int Player::victory_points() {
 
     // Grain:   0 | 1-3 | 4-5 | 6-7 | 8+
     // Points: -1 |  1  |  2  |  3  | 4
-    int grain = _player_board.num_planted_grain() + _grain;
-    if (grain == 0) {
+    int total_grain = player_board.num_planted_grain() + resources.grain;
+    if (total_grain == 0) {
         vps -= 1;
-    } else if (grain <= 3) {
+    } else if (total_grain <= 3) {
         vps += 1;
-    } else if (grain <= 5) {
+    } else if (total_grain <= 5) {
         vps += 2;
-    } else if (grain <= 7) {
+    } else if (total_grain <= 7) {
         vps += 3;
     } else {
         vps += 4;
@@ -42,24 +42,24 @@ int Player::victory_points() {
 
     // Vegetables:   0 | 1 | 2 | 3 | 4+
     // Points:      -1 | 1 | 2 | 3 | 4
-    int veg = _player_board.num_planted_veg() + _veg;
-    if (veg == 0) {
+    int total_veg = player_board.num_planted_veg() + resources.vegetables;
+    if (total_veg == 0) {
         vps -= 1;
-    } else if (veg <= 4) {
-        vps += veg;
+    } else if (total_veg <= 4) {
+        vps += total_veg;
     } else {
         vps += 4;
     }
 
     // Sheep:   0 | 1-3 | 4-5 | 6-7 | 8+
     // Points: -1 |  1  |  2  |  3  | 4
-    if (_sheep == 0) {
+    if (resources.sheep == 0) {
         vps -= 1;
-    } else if (_sheep <= 3) {
+    } else if (resources.sheep <= 3) {
         vps += 1;
-    } else if (_sheep <= 5) {
+    } else if (resources.sheep <= 5) {
         vps += 2;
-    } else if (_sheep <= 7) {
+    } else if (resources.sheep <= 7) {
         vps += 3;
     } else {
         vps += 4;
@@ -67,13 +67,13 @@ int Player::victory_points() {
 
     // Boar:    0 | 1-2 | 3-4 | 5-6 | 7+
     // Points: -1 |  1  |  2  |  3  | 4
-    if (_boar == 0) {
+    if (resources.boar == 0) {
         vps -= 1;
-    } else if (_boar <= 2) {
+    } else if (resources.boar <= 2) {
         vps += 1;
-    } else if (_boar <= 4) {
+    } else if (resources.boar <= 4) {
         vps += 2;
-    } else if (_boar <= 6) {
+    } else if (resources.boar <= 6) {
         vps += 3;
     } else {
         vps += 4;
@@ -81,29 +81,29 @@ int Player::victory_points() {
 
     // Cattle:  0 | 1 | 2-3 | 4-5 | 6+
     // Points: -1 | 1 |  2  |  3  | 4
-    if (_cattle == 0) {
+    if (resources.cattle == 0) {
         vps -= 1;
-    } else if (_cattle == 1) {
+    } else if (resources.cattle == 1) {
         vps += 1;
-    } else if (_cattle <= 3) {
+    } else if (resources.cattle <= 3) {
         vps += 2;
-    } else if (_cattle <= 5) {
+    } else if (resources.cattle <= 5) {
         vps += 3;
     } else {
         vps += 4;
     }
 
     // Empty squares -> -1 for each
-    vps -= _player_board.empty_tiles();
+    vps -= player_board.empty_tiles();
 
     // Fenced stable -> +1 for each
-    vps += _player_board.fenced_stables();
+    vps += player_board.fenced_stables();
 
     // Clay room -> +1 for each
-    vps += _player_board.clay_rooms();
+    vps += player_board.clay_rooms();
 
     // Stone room -> +2 for each
-    vps += 2 * _player_board.stone_rooms();
+    vps += 2 * player_board.stone_rooms();
 
     return vps;
 }

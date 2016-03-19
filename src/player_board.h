@@ -14,7 +14,6 @@ public:
     int fenced_stables();
     int clay_rooms();
     int stone_rooms();
-
 };
 
 #endif
