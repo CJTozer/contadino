@@ -2,7 +2,7 @@
 CC := g++
 CC_FLAGS := -Wall -Werror -fPIC -std=c++11
 CLANG := clang
-CLANG_FLAGS := --analyze
+CLANG_FLAGS := --analyze -std=c++11
 
 # Directories
 SRC_DIR := src
