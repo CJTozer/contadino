@@ -12,5 +12,5 @@ protected:
 
 // Arbitrary passing test
 TEST_F(PlayerTest, InitialVPTest) {
-  EXPECT_EQ(0, p1.victory_points());
+  EXPECT_EQ(-20, p1.victory_points());
 }
