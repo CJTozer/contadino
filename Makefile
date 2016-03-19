@@ -77,7 +77,7 @@ test: $(TEST_EXEC)
 # Static analysis
 .PHONY: clang
 clang: $(CLANG_OBJECTS)
-$(CLANG_DIR)/%.o: %.cpp
+$(CLANG_DIR)/%.o: %.cpp $(OBJ_DIR)/%.o
 	@$(call print_rule,CLANG,$<)
 	@mkdir -p $(dir $@)
 	@$(CLANG) -c $(CLANG_FLAGS) $(INCLUDE_FLAGS) $< -o $@
