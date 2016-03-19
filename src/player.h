@@ -6,9 +6,10 @@
 class Player
 {
 public:
-    Player();
-    ~Player();
+    // Player();
+    // ~Player();
     PlayerBoard player_board;
+    int get_victory_points();
 
 };
 

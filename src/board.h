@@ -4,8 +4,8 @@
 class Board
 {
 public:
-    Board();
-    ~Board();
+    // Board();
+    // ~Board();
 
 };
 

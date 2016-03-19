@@ -4,8 +4,8 @@
 class Game
 {
 public:
-    Game();
-    ~Game();
+    // Game();
+    // ~Game();
 
 };
 
