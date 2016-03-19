@@ -8,10 +8,10 @@ typedef ResourceCollection Reward;
 
 class Action {
 public:
-    Action(Cost cost, Reward reward) : cost(cost), reward(reward) {}
-
     Cost cost;
     Reward reward;
+
+    Action(Cost cost, Reward reward) : cost(cost), reward(reward) {}
 };
 
 #endif

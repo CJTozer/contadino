@@ -1,5 +1,10 @@
 #include "player.h"
 
+Action Player::select_move(std::list<Action> available_actions) {
+    Action null_action({0}, {0});
+    return null_action;
+}
+
 int Player::victory_points() {
     int vps = 0;
 
