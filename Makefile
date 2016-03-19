@@ -1,6 +1,6 @@
 # Declaration of variables
 CC := g++
-CC_FLAGS := -Wall -Werror
+CC_FLAGS := -Wall -Werror -fPIC -std=c++11
 CLANG := clang
 CLANG_FLAGS := --analyze
 
@@ -39,13 +39,13 @@ all: $(LIB) $(TEST_EXEC) clang test
 $(LIB): $(OBJECTS)
 	@$(call print_rule,LINK,$(LIB))
 	@mkdir -p $(LIB_DIR)
-	@$(CC) $(OBJECTS) -o $(LIB) -fPIC -shared $(addprefix -l,$(LIBS)) $(addprefix -L,$(LIB_DIRS))
+	@$(CC) $(OBJECTS) $(CC_FLAGS) -o $(LIB) -shared $(addprefix -l,$(LIBS)) $(addprefix -L,$(LIB_DIRS))
 
 # Test target (builds both source and test code into the executable)
 $(TEST_EXEC): $(LIB) $(TEST_OBJECTS)
 	@$(call print_rule,LINK,$(TEST_EXEC),$(TEST_EXEC))
 	@mkdir -p $(BIN_DIR)
-	@$(CC) $(OBJECTS) $(TEST_OBJECTS) -o $(TEST_EXEC) $(addprefix -l,$(TEST_LIBS)) $(addprefix -L,$(TEST_LIB_DIRS))
+	@$(CC) $(TEST_OBJECTS) $(CC_FLAGS) -o $(TEST_EXEC) $(addprefix -l,$(TEST_LIBS)) $(addprefix -L,$(TEST_LIB_DIRS))
 
 # General compilation rule
 $(OBJ_DIR)/%.o: %.cpp
@@ -62,20 +62,13 @@ clean:
 	@rm -rf $(OBJ_DIR)
 	@rm -f $(LIB)
 
-# Run the program
-.PHONY: run
-run: $(EXEC)
-	@$(call print_rule,RUN,$(EXEC))
-	@$(EXEC)
-
 # Run tests
 .PHONY: test
 test: $(TEST_EXEC)
 	@$(call print_rule,TEST,$(TEST_EXEC))
-	@$(TEST_EXEC) --gtest_color=yes
+	@LD_LIBRARY_PATH=lib/:$(LD_LIBRARY_PATH) $(TEST_EXEC) --gtest_color=yes
 
 # Static analysis
-.PHONY: clang
 clang: $(CLANG_OBJECTS)
 $(CLANG_DIR)/%.o: %.cpp $(OBJ_DIR)/%.o
 	@$(call print_rule,CLANG,$<)
