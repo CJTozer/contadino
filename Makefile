@@ -33,7 +33,7 @@ TEST_LIB_DIRS = lib
 
 # All target
 .PHONY: all
-all: $(LIB) $(TEST_EXEC)
+all: $(LIB) $(TEST_EXEC) clang test
 
 # Shared library
 $(LIB): $(OBJECTS)
