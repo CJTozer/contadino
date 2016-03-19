@@ -9,10 +9,11 @@ SRC_DIR := src
 OBJ_DIR := build
 CLANG_DIR := build/clang
 BIN_DIR := bin
+LIB_DIR := lib
 TEST_DIR := test
 
 # File names
-EXEC = $(BIN_DIR)/contadino
+LIB = $(LIB_DIR)/libcontadino.so
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(patsubst %,$(OBJ_DIR)/%,$(patsubst %.cpp,%.o,$(SOURCES)))
 CLANG_OBJECTS = $(patsubst %,$(CLANG_DIR)/%,$(patsubst %.cpp,%.o,$(SOURCES)))
@@ -20,32 +21,38 @@ TEST_EXEC = $(BIN_DIR)/contadino_test
 TEST_SOURCES = $(wildcard $(TEST_DIR)/*.cpp)
 TEST_OBJECTS = $(patsubst %,$(OBJ_DIR)/%,$(patsubst %.cpp,%.o,$(TEST_SOURCES)))
 
+# Include paths
+INCLUDES = .
+INCLUDE_FLAGS = $(addprefix -I,$(INCLUDES))
+
 # Libraries to link
 LIBS =
-TEST_LIBS = gtest pthread
+LIB_DIRS =
+TEST_LIBS = gtest pthread contadino
+TEST_LIB_DIRS = lib
 
 # All target
 .PHONY: all
-all: $(EXEC) $(TEST_EXEC)
+all: $(LIB) $(TEST_EXEC)
 
-# Main target
-$(EXEC): $(OBJECTS)
-	@$(call print_rule,LINK,$(EXEC))
-	@mkdir -p $(BIN_DIR)
-	@$(CC) $(OBJECTS) -o $(EXEC) $(addprefix -l,$(TEST_LIBS))
+# Shared library
+$(LIB): $(OBJECTS)
+	@$(call print_rule,LINK,$(LIB))
+	@mkdir -p $(LIB_DIR)
+	@$(CC) $(OBJECTS) -o $(LIB) -fPIC -shared $(addprefix -l,$(LIBS)) $(addprefix -L,$(LIB_DIRS))
 
-# Test target
-$(TEST_EXEC): $(TEST_OBJECTS) $(EXEC)
+# Test target (builds both source and test code into the executable)
+$(TEST_EXEC): $(LIB) $(TEST_OBJECTS)
 	@$(call print_rule,LINK,$(TEST_EXEC),$(TEST_EXEC))
 	@mkdir -p $(BIN_DIR)
-	@$(CC) $(TEST_OBJECTS) -o $(TEST_EXEC) $(addprefix -l,$(TEST_LIBS))
+	@$(CC) $(OBJECTS) $(TEST_OBJECTS) -o $(TEST_EXEC) $(addprefix -l,$(TEST_LIBS)) $(addprefix -L,$(TEST_LIB_DIRS))
 
 # General compilation rule
 $(OBJ_DIR)/%.o: %.cpp
 	@$(call print_rule,G++,$<)
 	@mkdir -p $(dir $@)
-	@$(CC) -M -MT $@ $(CC_FLAGS) $< -o $(@:.o=.d)
-	@$(CC) -c $(CC_FLAGS) $< -o $@
+	@$(CC) -M -MT $@ $(CC_FLAGS) $(INCLUDE_FLAGS) $< -o $(@:.o=.d)
+	@$(CC) -c $(CC_FLAGS) $(INCLUDE_FLAGS) $< -o $@
 
 # Clean
 .PHONY: clean
@@ -53,6 +60,7 @@ clean:
 	@$(call print_rule,CLEAN,cleaning...)
 	@rm -f $(EXEC) $(TEST_EXEC)
 	@rm -rf $(OBJ_DIR)
+	@rm -f $(LIB)
 
 # Run the program
 .PHONY: run
@@ -72,7 +80,7 @@ clang: $(CLANG_OBJECTS)
 $(CLANG_DIR)/%.o: %.cpp
 	@$(call print_rule,CLANG,$<)
 	@mkdir -p $(dir $@)
-	@$(CLANG) -c $(CLANG_FLAGS) $< -o $@
+	@$(CLANG) -c $(CLANG_FLAGS) $(INCLUDE_FLAGS) $< -o $@
 
 # Include all the dependencies
 -include $(OBJECTS:.o=.d)
