@@ -5,11 +5,18 @@
 
 class Player
 {
+private:
+    PlayerBoard _player_board;
+    int _grain = 0;
+    int _veg = 0;
+    int _sheep = 0;
+    int _boar = 0;
+    int _cattle = 0;
+
 public:
     // Player();
     // ~Player();
-    PlayerBoard player_board;
-    int get_victory_points();
+    int victory_points();
 
 };
 
