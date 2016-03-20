@@ -12,7 +12,6 @@ public:
     std::list<Action*> available_actions(Player& p);
     int round = 1;
     std::list<BoardSpace*> board_spaces;
-
 };
 
 #endif
