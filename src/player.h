@@ -12,7 +12,7 @@ public:
     PlayerBoard player_board;
     ResourceCollection resources = {0};
 
-    Action select_move(std::list<Action> available_actions);
+    Action* select_move(std::list<Action*> available_actions);
     int victory_points();
 };
 

@@ -7,7 +7,7 @@ class Game {
 public:
     Board board;
 
-    Game(Board board): board(board) {}
+    Game(Board& board): board(board) {}
 };
 
 #endif

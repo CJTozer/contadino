@@ -1,8 +1,7 @@
 #include "player.h"
 
-Action Player::select_move(std::list<Action> available_actions) {
-    Action null_action({0}, {0});
-    return null_action;
+Action* Player::select_move(std::list<Action *> available_actions) {
+    return available_actions.front();
 }
 
 int Player::victory_points() {

@@ -4,8 +4,6 @@
 class PlayerBoard
 {
 public:
-    // PlayerBoard();
-    // ~PlayerBoard();
     int num_fields();
     int num_pastures();
     int num_planted_grain();
